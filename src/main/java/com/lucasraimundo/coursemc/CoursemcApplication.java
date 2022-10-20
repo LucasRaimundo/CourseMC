@@ -7,12 +7,17 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.lucasraimundo.coursemc.domain.Adress;
 import com.lucasraimundo.coursemc.domain.Category;
 import com.lucasraimundo.coursemc.domain.City;
+import com.lucasraimundo.coursemc.domain.Client;
 import com.lucasraimundo.coursemc.domain.Product;
 import com.lucasraimundo.coursemc.domain.State;
+import com.lucasraimundo.coursemc.domain.enums.TypeClient;
+import com.lucasraimundo.coursemc.repositories.AdressRepository;
 import com.lucasraimundo.coursemc.repositories.CategoryRepository;
 import com.lucasraimundo.coursemc.repositories.CityRepository;
+import com.lucasraimundo.coursemc.repositories.ClientRepository;
 import com.lucasraimundo.coursemc.repositories.ProductRepository;
 import com.lucasraimundo.coursemc.repositories.StateRepository;
 
@@ -20,16 +25,22 @@ import com.lucasraimundo.coursemc.repositories.StateRepository;
 public class CoursemcApplication implements CommandLineRunner {
 	
 	@Autowired
-	CategoryRepository categoryRepository;
+	private CategoryRepository categoryRepository;
 	
 	@Autowired
-	ProductRepository productRepository;
+	private ProductRepository productRepository;
 	
 	@Autowired
-	StateRepository stateRepository;
+	private StateRepository stateRepository;
 	
 	@Autowired
-	CityRepository cityRepository;
+	private CityRepository cityRepository;
+	
+	@Autowired
+	private ClientRepository clientRepository;
+	
+	@Autowired
+	private AdressRepository adressRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CoursemcApplication.class, args);
@@ -68,6 +79,19 @@ public class CoursemcApplication implements CommandLineRunner {
 		
 		stateRepository.saveAll(Arrays.asList(s1, s2));
 		cityRepository.saveAll(Arrays.asList(c1, c2, c3));
+		
+		
+		Client cli1 = new Client(null, "Maria Silva", "maria@gmail.com", "488.456.448.77", TypeClient.PESSOAFISICA);
+		
+		cli1.getPhones().addAll(Arrays.asList("5988-4411", "98465-1078"));
+		
+		Adress e1 = new Adress(null, "Rua Flores", "300", "Apto 303", "Jardins", "15989356", cli1, c1);
+		Adress e2 = new Adress(null, "Avenida Matos", "105", "Sala 800", "Centro", "45978652", cli1, c2);
+		
+		cli1.getAdresses().addAll(Arrays.asList(e1, e2));
+		
+		clientRepository.saveAll(Arrays.asList(cli1));
+		adressRepository.saveAll(Arrays.asList(e1, e2));
 		
 		
 		
