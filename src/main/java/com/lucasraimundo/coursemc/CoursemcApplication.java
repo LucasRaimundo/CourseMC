@@ -1,5 +1,6 @@
 package com.lucasraimundo.coursemc;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,20 @@ import com.lucasraimundo.coursemc.domain.Adress;
 import com.lucasraimundo.coursemc.domain.Category;
 import com.lucasraimundo.coursemc.domain.City;
 import com.lucasraimundo.coursemc.domain.Client;
+import com.lucasraimundo.coursemc.domain.Orders;
+import com.lucasraimundo.coursemc.domain.Payment;
+import com.lucasraimundo.coursemc.domain.PaymentWithCard;
+import com.lucasraimundo.coursemc.domain.PaymentWithTicket;
 import com.lucasraimundo.coursemc.domain.Product;
 import com.lucasraimundo.coursemc.domain.State;
+import com.lucasraimundo.coursemc.domain.enums.StatusPayment;
 import com.lucasraimundo.coursemc.domain.enums.TypeClient;
 import com.lucasraimundo.coursemc.repositories.AdressRepository;
 import com.lucasraimundo.coursemc.repositories.CategoryRepository;
 import com.lucasraimundo.coursemc.repositories.CityRepository;
 import com.lucasraimundo.coursemc.repositories.ClientRepository;
+import com.lucasraimundo.coursemc.repositories.OrdersRepository;
+import com.lucasraimundo.coursemc.repositories.PaymentRepository;
 import com.lucasraimundo.coursemc.repositories.ProductRepository;
 import com.lucasraimundo.coursemc.repositories.StateRepository;
 
@@ -41,6 +49,12 @@ public class CoursemcApplication implements CommandLineRunner {
 	
 	@Autowired
 	private AdressRepository adressRepository;
+	
+	@Autowired
+	private OrdersRepository ordersRepository;
+	
+	@Autowired
+	private PaymentRepository paymentRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CoursemcApplication.class, args);
@@ -93,9 +107,21 @@ public class CoursemcApplication implements CommandLineRunner {
 		clientRepository.saveAll(Arrays.asList(cli1));
 		adressRepository.saveAll(Arrays.asList(e1, e2));
 		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		
+		Orders o1 = new Orders(null, sdf.parse("30/09/2017 10:32"), cli1, e1);
+		Orders o2 = new Orders(null, sdf.parse("10/10/2017 19:35"), cli1, e2);
 		
+		Payment pag1 = new PaymentWithCard(null, StatusPayment.QUITADO, o1, 6);
+		o1.setPayment(pag1);
 		
+		Payment pag2 = new PaymentWithTicket(null, StatusPayment.PENDENTE, o2, sdf.parse("20/10/2017 00:00"), null);
+		o2.setPayment(pag2);
+		
+		cli1.getOrders().addAll(Arrays.asList(o1,o2));
+		
+		ordersRepository.saveAll(Arrays.asList(o1, o2));
+		paymentRepository.saveAll(Arrays.asList(pag1, pag2));
 		
 	}
 
