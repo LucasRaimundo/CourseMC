@@ -12,6 +12,7 @@ import com.lucasraimundo.coursemc.domain.Adress;
 import com.lucasraimundo.coursemc.domain.Category;
 import com.lucasraimundo.coursemc.domain.City;
 import com.lucasraimundo.coursemc.domain.Client;
+import com.lucasraimundo.coursemc.domain.ItemOrder;
 import com.lucasraimundo.coursemc.domain.Orders;
 import com.lucasraimundo.coursemc.domain.Payment;
 import com.lucasraimundo.coursemc.domain.PaymentWithCard;
@@ -24,6 +25,7 @@ import com.lucasraimundo.coursemc.repositories.AdressRepository;
 import com.lucasraimundo.coursemc.repositories.CategoryRepository;
 import com.lucasraimundo.coursemc.repositories.CityRepository;
 import com.lucasraimundo.coursemc.repositories.ClientRepository;
+import com.lucasraimundo.coursemc.repositories.ItemOrderRepository;
 import com.lucasraimundo.coursemc.repositories.OrdersRepository;
 import com.lucasraimundo.coursemc.repositories.PaymentRepository;
 import com.lucasraimundo.coursemc.repositories.ProductRepository;
@@ -55,6 +57,9 @@ public class CoursemcApplication implements CommandLineRunner {
 	
 	@Autowired
 	private PaymentRepository paymentRepository;
+	
+	@Autowired
+	private ItemOrderRepository itemOrderRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CoursemcApplication.class, args);
@@ -122,6 +127,19 @@ public class CoursemcApplication implements CommandLineRunner {
 		
 		ordersRepository.saveAll(Arrays.asList(o1, o2));
 		paymentRepository.saveAll(Arrays.asList(pag1, pag2));
+		
+		ItemOrder ip1 = new ItemOrder(o1, p1, 0.00, 1, 2000.00);
+		ItemOrder ip2 = new ItemOrder(o1, p3, 0.00, 2, 80.00);
+		ItemOrder ip3 = new ItemOrder(o2, p2, 100.00, 1, 800.00);
+		
+		o1.getItems().addAll(Arrays.asList(ip1, ip2));
+		o2.getItems().addAll(Arrays.asList(ip3));
+		
+		p1.getItems().addAll(Arrays.asList(ip1));
+		p2.getItems().addAll(Arrays.asList(ip3));
+		p3.getItems().addAll(Arrays.asList(ip2));
+		
+		itemOrderRepository.saveAll(Arrays.asList(ip1, ip2, ip3));
 		
 	}
 
