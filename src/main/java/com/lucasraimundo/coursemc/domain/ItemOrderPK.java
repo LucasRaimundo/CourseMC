@@ -12,6 +12,7 @@ public class ItemOrderPK implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
+	
 	@ManyToOne
 	@JoinColumn(name="order_id")
 	private Orders orders;
