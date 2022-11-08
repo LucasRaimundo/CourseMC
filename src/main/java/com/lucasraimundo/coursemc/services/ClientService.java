@@ -9,9 +9,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.lucasraimundo.coursemc.domain.Adress;
+import com.lucasraimundo.coursemc.domain.City;
 import com.lucasraimundo.coursemc.domain.Client;
+import com.lucasraimundo.coursemc.domain.enums.TypeClient;
 import com.lucasraimundo.coursemc.dto.ClientDTO;
+import com.lucasraimundo.coursemc.dto.ClientNewDTO;
+import com.lucasraimundo.coursemc.repositories.AdressRepository;
 import com.lucasraimundo.coursemc.repositories.ClientRepository;
 import com.lucasraimundo.coursemc.services.exceptions.DataIntegrityException;
 import com.lucasraimundo.coursemc.services.exceptions.ObjectNotFoundException;
@@ -21,6 +27,9 @@ public class ClientService {
 	
 	@Autowired
 	private ClientRepository repo;
+	
+	@Autowired
+	private AdressRepository adressRepository;
 
 	public Client find(Integer id) {
 		Optional<Client> obj = repo.findById(id);
@@ -57,8 +66,32 @@ public class ClientService {
 		return new Client(objDto.getId(), objDto.getName(), objDto.getEmail(), null, null);
 	}
 	
+	public Client fromDTO(ClientNewDTO objDto) {
+		Client cli = new Client(null, objDto.getName(), objDto.getEmail(), objDto.getCpf(), TypeClient.toEnum(objDto.getType()));
+		City cid = new City(objDto.getCityId(), null, null);
+		Adress end = new Adress(null, objDto.getLogadouro(), objDto.getNumber(), objDto.getComplement(), objDto.getDistrict(), objDto.getCep(), cli, cid);
+		cli.getAdresses().add(end);
+		cli.getPhones().add(objDto.getPhone1());
+		if (objDto.getPhone2()!=null) {
+			cli.getPhones().add(objDto.getPhone2());
+		}
+		if (objDto.getPhone3()!=null) {
+			cli.getPhones().add(objDto.getPhone3());
+		}
+		return cli;
+	}
+	
+	
 	private void updateData(Client newObj, Client obj) {
 		newObj.setName(obj.getName());
 		newObj.setEmail(obj.getEmail());
+	}
+	
+	@Transactional
+	public Client insert(Client obj) {
+		obj.setId(null);
+		obj = repo.save(obj);
+		adressRepository.saveAll(obj.getAdresses());
+		return obj;
 	}
 }
