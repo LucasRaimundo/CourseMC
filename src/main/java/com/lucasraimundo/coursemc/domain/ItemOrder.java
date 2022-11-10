@@ -78,6 +78,14 @@ public class ItemOrder implements Serializable {
 	public Product getProduct() {
 		return id.getProduct();
 	}
+	
+	public void setOrders(Orders orders) {
+		id.setOrders(orders);
+	}
+	
+	public void setProduct(Product product) {
+		id.setProduct(product);
+	}
 
 	@Override
 	public int hashCode() {
