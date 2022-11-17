@@ -35,6 +35,9 @@ public class OrderService {
 	private ItemOrderRepository itemOrderRepository;
 	
 	@Autowired
+	private EmailService emailService;
+	
+	@Autowired
 	private ClientService clientService;
 
 	public Orders find(Integer id) {
@@ -65,7 +68,7 @@ public class OrderService {
 		}
 		itemOrderRepository.saveAll(obj.getItems());
 		
-		System.out.println(obj);
+		emailService.sendOrderConfirmationEmail(obj);
 		return obj;
 	}
 }
