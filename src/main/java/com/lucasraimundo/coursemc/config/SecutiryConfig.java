@@ -20,6 +20,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.lucasraimundo.coursemc.security.JWTAuthenticationFilter;
+import com.lucasraimundo.coursemc.security.JWTAuthorizationFilter;
+import com.lucasraimundo.coursemc.security.JWTUtil;
 
 @Configuration
 @EnableWebSecurity
@@ -59,6 +61,7 @@ public class SecutiryConfig extends WebSecurityConfigurerAdapter {
 		.antMatchers(PUBLIC_MATCHES).permitAll()
 		.anyRequest().authenticated();
 		http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
+		http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 	
