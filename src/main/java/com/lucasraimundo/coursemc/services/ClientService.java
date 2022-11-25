@@ -15,11 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lucasraimundo.coursemc.domain.Adress;
 import com.lucasraimundo.coursemc.domain.City;
 import com.lucasraimundo.coursemc.domain.Client;
+import com.lucasraimundo.coursemc.domain.enums.Profile;
 import com.lucasraimundo.coursemc.domain.enums.TypeClient;
 import com.lucasraimundo.coursemc.dto.ClientDTO;
 import com.lucasraimundo.coursemc.dto.ClientNewDTO;
 import com.lucasraimundo.coursemc.repositories.AdressRepository;
 import com.lucasraimundo.coursemc.repositories.ClientRepository;
+import com.lucasraimundo.coursemc.security.UserSS;
+import com.lucasraimundo.coursemc.services.exceptions.AuthorizationException;
 import com.lucasraimundo.coursemc.services.exceptions.DataIntegrityException;
 import com.lucasraimundo.coursemc.services.exceptions.ObjectNotFoundException;
 
@@ -37,6 +40,12 @@ public class ClientService {
 	private AdressRepository adressRepository;
 
 	public Client find(Integer id) {
+		
+		UserSS user = UserService.authenticated();
+		if(user == null || user.hasRole(Profile.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso negado");
+		}
+		
 		Optional<Client> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				 "Objeto não encontrado! Id: " + id + ", Tipo: " + Client.class.getName()));
