@@ -1,5 +1,6 @@
 package com.lucasraimundo.coursemc.services;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.lucasraimundo.coursemc.domain.Adress;
 import com.lucasraimundo.coursemc.domain.City;
@@ -38,6 +40,9 @@ public class ClientService {
 	
 	@Autowired
 	private AdressRepository adressRepository;
+	
+	@Autowired
+	private S3Service s3Service;
 
 	public Client find(Integer id) {
 		
@@ -107,5 +112,9 @@ public class ClientService {
 		obj = repo.save(obj);
 		adressRepository.saveAll(obj.getAdresses());
 		return obj;
+	}
+	
+	public URI uploadProfilePicture(MultipartFile multipartFile) {
+		return s3Service.uploadFile(multipartFile);
 	}
 }
