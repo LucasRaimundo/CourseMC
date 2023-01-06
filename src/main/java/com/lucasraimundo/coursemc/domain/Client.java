@@ -58,7 +58,7 @@ public class Client implements Serializable {
 	@OneToMany(mappedBy = "client")
 	private List<Orders> orders = new ArrayList<>();
 	
-	private String imageUrl;
+	
 	
 	public Client() {
 		addPerfil(Profile.CLIENTE);
@@ -174,14 +174,7 @@ public class Client implements Serializable {
 		return Objects.equals(id, other.id);
 	}
 
-	public String getImageUrl() {
-		return imageUrl;
-	}
-
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
-
+	
 	
 
 	
